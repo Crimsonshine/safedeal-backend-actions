@@ -25,10 +25,10 @@ class RegisterController extends AbstractController
     {
         $form = $this->createFormBuilder()
             ->add('email')
-            ->add('fullname', TelType::class, [
+            ->add('full_name', TelType::class, [
                 'label' =>'Full name'
             ])
-            ->add('telnumber', TelType::class,  [
+            ->add('tel_number', TelType::class,  [
                 'label' =>'Telephone'
             ])
             ->add('birthday', DateType::class, [
@@ -56,13 +56,13 @@ class RegisterController extends AbstractController
             $user = new User();
             $user->setEmail($data['email']);
             $user->setRoles(['ROLE_USER']);
-            $user->setFullname($data['fullname']);
-            $user->setTelnumber($data['telnumber']);
+            $user->setFullName($data['full_name']);
+            $user->setTelNumber($data['tel_number']);
             $user->setBirthday($data['birthday']);
             $user->setPassword(
                 $passwordEncoder->encodePassword($user,$data['password'])
             );
-            $user->setRegisterdate(date('H:i:s \O\n d/m/Y'));
+            $user->setRegisterDate(date('H:i:s \O\n d/m/Y'));
             //dump($user);
 
             $em = $this->getDoctrine()->getManager();

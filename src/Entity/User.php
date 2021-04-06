@@ -37,12 +37,12 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $fullname;
+    private $fullName;
 
     /**
      * @ORM\Column(type="string")
      */
-    private $telnumber;
+    private $telNumber;
 
     /**
      * @ORM\Column(type="date")
@@ -52,7 +52,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string")
      */
-    private $registerdate;
+    private $registerDate;
 
     public function getId(): ?int
     {
@@ -135,26 +135,26 @@ class User implements UserInterface
         // $this->plainPassword = null;
     }
 
-    public function getFullname(): ?string
+    public function getFullName(): ?string
     {
-        return $this->fullname;
+        return $this->fullName;
     }
 
-    public function setFullname(string $fullname): self
+    public function setFullName(string $fullName): self
     {
-        $this->fullname = $fullname;
+        $this->fullName = $fullName;
 
         return $this;
     }
 
-    public function getTelnumber(): ?string
+    public function getTelNumber(): ?string
     {
-        return $this->telnumber;
+        return $this->telNumber;
     }
 
-    public function setTelnumber(int $telnumber): self
+    public function setTelNumber(int $telNumber): self
     {
-        $this->telnumber = $telnumber;
+        $this->telNumber = $telNumber;
 
         return $this;
     }
@@ -171,14 +171,14 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getRegisterdate(): ?string
+    public function getRegisterDate(): ?string
     {
-        return $this->registerdate;
+        return $this->registerDate;
     }
 
-    public function setRegisterdate(string $registerdate): self
+    public function setRegisterDate(string $registerDate): self
     {
-        $this->registerdate = $registerdate;
+        $this->registerDate = $registerDate;
 
         return $this;
     }
