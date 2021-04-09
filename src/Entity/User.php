@@ -56,6 +56,16 @@ class User implements UserInterface
      */
     private $registerDate;
 
+    /**
+     * @ORM\OneToMany(targetEntity=ProductList::class, mappedBy="sender")
+     */
+    private $productLists;
+
+    public function __construct()
+    {
+        $this->productLists = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -181,6 +191,36 @@ class User implements UserInterface
     public function setRegisterDate(string $registerDate): self
     {
         $this->registerDate = $registerDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductList[]
+     */
+    public function getProductLists(): Collection
+    {
+        return $this->productLists;
+    }
+
+    public function addProductList(ProductList $productList): self
+    {
+        if (!$this->productLists->contains($productList)) {
+            $this->productLists[] = $productList;
+            $productList->setSender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductList(ProductList $productList): self
+    {
+        if ($this->productLists->removeElement($productList)) {
+            // set the owning side to null (unless already changed)
+            if ($productList->getSender() === $this) {
+                $productList->setSender(null);
+            }
+        }
 
         return $this;
     }
