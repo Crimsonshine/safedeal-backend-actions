@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ProductListRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=ProductListRepository::class)
@@ -62,12 +63,12 @@ class ProductList
         return $this;
     }
 
-    public function getSender(): ?User
+    public function getSender(): ?UserInterface
     {
         return $this->sender;
     }
 
-    public function setSender(?User $sender): self
+    public function setSender(?UserInterface $sender): self
     {
         $this->sender = $sender;
 

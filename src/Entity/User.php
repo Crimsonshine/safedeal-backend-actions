@@ -224,4 +224,10 @@ class User implements UserInterface
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return $this->roles == 'ROLE_SENDER' ? $this->fullName : '';
+    }
+
 }

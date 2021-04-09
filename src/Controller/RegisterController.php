@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,22 +24,24 @@ class RegisterController extends AbstractController
     {
         $form = $this->createFormBuilder()
             ->add('email')
-            ->add('full_name', TelType::class, [
-                'label' =>'Full name'
+            ->add('full_name', TextType::class, [
+                'label' =>'Полное имя'
             ])
             ->add('tel_number', TelType::class,  [
-                'label' =>'Telephone'
+                'label' =>'Телефон'
             ])
             ->add('birthday', DateType::class, [
+                'label' =>'День рождения',
                 'years' => range(1940,2021)
             ])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'required' => true,
-                'first_options'  => ['label' => 'Password'],
-                'second_options' => ['label' => 'Confirm Password']
+                'first_options'  => ['label' => 'Пароль'],
+                'second_options' => ['label' => 'Потвердите пароль']
             ])
             ->add('register', SubmitType::class, [
+                'label' => 'Зарегестрироваться',
                 'attr' =>[
                     'class' =>'btn btn-success float-right'
                 ]
