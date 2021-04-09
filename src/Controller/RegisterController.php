@@ -3,8 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use libphonenumber\PhoneNumberFormat;
-use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;

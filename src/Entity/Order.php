@@ -19,17 +19,19 @@ class Order
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="orders")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $customer;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="orders")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $sender;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="orders")
      */
     private $courier;
 
@@ -63,36 +65,36 @@ class Order
         return $this->id;
     }
 
-    public function getCustomer(): ?int
+    public function getCustomer(): ?User
     {
         return $this->customer;
     }
 
-    public function setCustomer(int $customer): self
+    public function setCustomer(?User $customer): self
     {
         $this->customer = $customer;
 
         return $this;
     }
 
-    public function getSender(): ?int
+    public function getSender(): ?User
     {
         return $this->sender;
     }
 
-    public function setSender(int $sender): self
+    public function setSender(?User $sender): self
     {
         $this->sender = $sender;
 
         return $this;
     }
 
-    public function getCourier(): ?int
+    public function getCourier(): ?User
     {
         return $this->courier;
     }
 
-    public function setCourier(?int $courier): self
+    public function setCourier(?User $courier): self
     {
         $this->courier = $courier;
 
