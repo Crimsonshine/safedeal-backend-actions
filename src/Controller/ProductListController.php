@@ -3,8 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\ProductList;
-use Doctrine\DBAL\Types\FloatType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Repository\ProductListRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -13,9 +12,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[Route('/product', name: 'product.')]
 class ProductListController extends AbstractController
 {
-    #[Route('/product/list', name: 'product_list')]
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/add', name: 'add')]
     public function index(Request $request): Response
     {
         $form = $this->createFormBuilder()
@@ -26,7 +30,7 @@ class ProductListController extends AbstractController
                 'label' =>'Цена',
                 'currency' => 'RUB'
             ])
-            ->add('register', SubmitType::class, [
+            ->add('submit', SubmitType::class, [
                 'label' => 'Добавить',
                 'attr' =>[
                     'class' =>'btn btn-success float-right'
@@ -45,17 +49,40 @@ class ProductListController extends AbstractController
             $product->setProductName($data['product_name']);
             $product->setProductPrice($data['product_price']);
             $product->setSender($user);
-            dump($user);
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($product);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('app_login'));
+            return $this->redirect($this->generateUrl('main'));
         }
 
         return $this->render('product_list/index.html.twig', [
             'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @param ProductListRepository $productListRepository
+     * @return Response
+     */
+    #[Route('/list', name: 'list')]
+    public function list(ProductListRepository $productListRepository): Response
+    {
+        $products = $productListRepository->findAll();
+        return $this->render('product_list/list.html.twig', [
+            'products' => $products
+        ]);
+    }
+
+    /**
+     * @param ProductList $product
+     * @return Response
+     */
+    #[Route('/show/{id}', name: 'show')]
+    public function show(ProductList $product): Response {
+        return $this->render('product_list/show.html.twig', [
+            'product' => $product
         ]);
     }
 }

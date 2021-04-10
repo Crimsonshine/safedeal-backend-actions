@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div class="jumbotron">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+        <h2>Список товаров</h2>
+        <table class="table table-striped">
+            <thread>
+                <tr>
+                    <td>ID</td>
+                    <td>Название</td>
+                    <td>Действия</td>
+                </tr>
+            </thread>
+            <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>
+                        <a href="{{ path('product.show', {id: product.id}) }}">
+                            {{ product.productName }}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
