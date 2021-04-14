@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\ProductList;
-use App\Repository\ProductListRepository;
+use App\Entity\Product;
+use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/product', name: 'product.')]
-class ProductListController extends AbstractController
+class ProductController extends AbstractController
 {
     /**
      * @param Request $request
@@ -23,10 +23,10 @@ class ProductListController extends AbstractController
     public function add(Request $request): Response
     {
         $form = $this->createFormBuilder()
-            ->add('product_name', TextType::class, [
+            ->add('name', TextType::class, [
                 'label' =>'Название'
             ])
-            ->add('product_price',  MoneyType::class, [
+            ->add('price',  MoneyType::class, [
                 'label' =>'Цена',
                 'currency' => 'RUB'
             ])
@@ -45,9 +45,9 @@ class ProductListController extends AbstractController
             $data = $form->getData();
             $user = $this->getUser();
 
-            $product = new ProductList();
-            $product->setProductName($data['product_name']);
-            $product->setProductPrice($data['product_price']);
+            $product = new Product();
+            $product->setName($data['name']);
+            $product->setPrice($data['price']);
             $product->setSender($user);
 
             $em = $this->getDoctrine()->getManager();
@@ -63,11 +63,11 @@ class ProductListController extends AbstractController
     }
 
     /**
-     * @param ProductListRepository $repository
+     * @param ProductRepository $repository
      * @return Response
      */
     #[Route('/list', name: 'list')]
-    public function list(ProductListRepository $repository): Response
+    public function list(ProductRepository $repository): Response
     {
         $user = $this->getUser();
         $products = $repository->findBy(['sender' => $user]);
@@ -78,7 +78,7 @@ class ProductListController extends AbstractController
     }
 
     #[Route('/all', name: 'all')]
-    public function all(ProductListRepository $repository): Response
+    public function all(ProductRepository $repository): Response
     {
         $user = $this->getUser();
         $products = $repository->findAll();
@@ -89,11 +89,11 @@ class ProductListController extends AbstractController
     }
 
     /**
-     * @param ProductList $product
+     * @param Product $product
      * @return Response
      */
     #[Route('/show/{id}', name: 'show')]
-    public function show(ProductList $product): Response {
+    public function show(Product $product): Response {
         return $this->render('product_list/show.html.twig', [
             'product' => $product
         ]);

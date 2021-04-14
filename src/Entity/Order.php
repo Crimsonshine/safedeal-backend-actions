@@ -38,11 +38,6 @@ class Order
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $addressFrom;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     private $addressTo;
 
     /**
@@ -97,18 +92,6 @@ class Order
     public function setCourier(?User $courier): self
     {
         $this->courier = $courier;
-
-        return $this;
-    }
-
-    public function getAddressFrom(): ?string
-    {
-        return $this->addressFrom;
-    }
-
-    public function setAddressFrom(string $addressFrom): self
-    {
-        $this->addressFrom = $addressFrom;
 
         return $this;
     }

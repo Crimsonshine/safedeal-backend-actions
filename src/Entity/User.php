@@ -196,14 +196,14 @@ class User implements UserInterface
     }
 
     /**
-     * @return Collection|ProductList[]
+     * @return Collection|Product[]
      */
     public function getProductLists(): Collection
     {
         return $this->productLists;
     }
 
-    public function addProductList(ProductList $productList): self
+    public function addProductList(Product $productList): self
     {
         if (!$this->productLists->contains($productList)) {
             $this->productLists[] = $productList;
@@ -213,7 +213,7 @@ class User implements UserInterface
         return $this;
     }
 
-    public function removeProductList(ProductList $productList): self
+    public function removeProductList(Product $productList): self
     {
         if ($this->productLists->removeElement($productList)) {
             // set the owning side to null (unless already changed)

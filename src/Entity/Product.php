@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\ProductListRepository;
+use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=ProductListRepository::class)
  */
-class ProductList
+class Product
 {
     /**
      * @ORM\Id
@@ -21,12 +21,17 @@ class ProductList
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $productName;
+    private $name;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $productPrice;
+    private $price;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $addressFrom;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="productLists")
@@ -39,26 +44,38 @@ class ProductList
         return $this->id;
     }
 
-    public function getProductName(): ?string
+    public function getName(): ?string
     {
-        return $this->productName;
+        return $this->name;
     }
 
-    public function setProductName(string $productName): self
+    public function setName(string $name): self
     {
-        $this->productName = $productName;
+        $this->name = $name;
 
         return $this;
     }
 
-    public function getProductPrice(): ?float
+    public function getPrice(): ?float
     {
-        return $this->productPrice;
+        return $this->price;
     }
 
-    public function setProductPrice(float $productPrice): self
+    public function setPrice(float $price): self
     {
-        $this->productPrice = $productPrice;
+        $this->price = $price;
+
+        return $this;
+    }
+
+    public function getAddressFrom(): ?string
+    {
+        return $this->addressFrom;
+    }
+
+    public function setAddressFrom(string $addressFrom): self
+    {
+        $this->addressFrom = $addressFrom;
 
         return $this;
     }
