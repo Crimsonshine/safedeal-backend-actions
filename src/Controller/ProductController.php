@@ -30,6 +30,9 @@ class ProductController extends AbstractController
                 'label' =>'Цена',
                 'currency' => 'RUB'
             ])
+            ->add('address_from',  TextType::class, [
+                'label' =>'Адрес отправки'
+            ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Добавить',
                 'attr' =>[
@@ -48,6 +51,7 @@ class ProductController extends AbstractController
             $product = new Product();
             $product->setName($data['name']);
             $product->setPrice($data['price']);
+            $product->setAddressFrom($data['address_from']);
             $product->setSender($user);
 
             $em = $this->getDoctrine()->getManager();

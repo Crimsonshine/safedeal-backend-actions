@@ -12,6 +12,7 @@
                 <tr>
                     <td><b>Название</b></td>
                     <td><b>Цена</b></td>
+                    <td><b>Адрес отправки</b></td>
                 </tr>
             </thread>
             <tbody>
@@ -22,6 +23,9 @@
                     </td>
                     <td>
                         {{ product.price }}
+                    </td>
+                    <td>
+                        {{ product.addressFrom }}
                     </td>
                 </tr>
             {% endfor %}

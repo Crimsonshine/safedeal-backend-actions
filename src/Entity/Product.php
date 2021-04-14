@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @ORM\Entity(repositoryClass=ProductListRepository::class)
+ * @ORM\Entity(repositoryClass=ProductRepository::class)
  */
 class Product
 {
@@ -34,7 +34,7 @@ class Product
     private $addressFrom;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="productLists")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="Products")
      * @ORM\JoinColumn(nullable=false)
      */
     private $sender;
