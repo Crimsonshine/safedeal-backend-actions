@@ -10,19 +10,18 @@
         <table class="table table-striped">
             <thread>
                 <tr>
-                    <td>ID</td>
-                    <td>Название</td>
-                    <td>Действия</td>
+                    <td><b>Название</b></td>
+                    <td><b>Цена</b></td>
                 </tr>
             </thread>
             <tbody>
             {% for product in products %}
                 <tr>
-                    <td>{{ product.id }}</td>
                     <td>
-                        <a href="{{ path('product.show', {id: product.id}) }}">
-                            {{ product.productName }}
-                        </a>
+                        {{ product.productName }}
+                    </td>
+                    <td>
+                        {{ product.productPrice }}
                     </td>
                 </tr>
             {% endfor %}

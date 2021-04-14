@@ -20,7 +20,7 @@ class ProductListController extends AbstractController
      * @return Response
      */
     #[Route('/add', name: 'add')]
-    public function index(Request $request): Response
+    public function add(Request $request): Response
     {
         $form = $this->createFormBuilder()
             ->add('product_name', TextType::class, [
@@ -63,14 +63,27 @@ class ProductListController extends AbstractController
     }
 
     /**
-     * @param ProductListRepository $productListRepository
+     * @param ProductListRepository $repository
      * @return Response
      */
     #[Route('/list', name: 'list')]
-    public function list(ProductListRepository $productListRepository): Response
+    public function list(ProductListRepository $repository): Response
     {
-        $products = $productListRepository->findAll();
+        $user = $this->getUser();
+        $products = $repository->findBy(['sender' => $user]);
+
         return $this->render('product_list/list.html.twig', [
+            'products' => $products
+        ]);
+    }
+
+    #[Route('/all', name: 'all')]
+    public function all(ProductListRepository $repository): Response
+    {
+        $user = $this->getUser();
+        $products = $repository->findAll();
+
+        return $this->render('product_list/all.html.twig', [
             'products' => $products
         ]);
     }
