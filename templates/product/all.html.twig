@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div class="album py-5 bg-light">
+        <div class="jumbotron">
+            <div class="row">
+
+                {% for product in products %}
+                    <div class="col-md-3">
+                        <div class="card mb-4 box-shadow">
+                            <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&amp;bg=55595c&amp;fg=eceeef&amp;text=Thumbnail" alt="Картинка товара [100%x225]" style="height: 225px; width: 100%; display: block;" src="{{ '/uploads/' ~ product.image }}" data-holder-rendered="true">
+                            <div class="card-body">
+                                <p class="font-weight-bold">{{ product.name }}</p>
+                                <p class="font-weight-light">{{ product.price }} RUB</p>
+                                <p class="card-text">Описание</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+
+                                        <a href="{{ path('product.cart_add', {id: product.id}) }}" class="btn btn-sm btn-outline-secondary">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart-check" viewBox="0 0 16 16">
+                                                <path d="M11.354 6.354a.5.5 0 0 0-.708-.708L8 8.293 6.854 7.146a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"/>
+                                                <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                                            </svg>
+                                            Добавить в корзину
+                                        </a>
+                                        <a href="{{ path('order.create') }}" class="btn btn-sm btn-outline-secondary">Оформить заказ</a>
+{#                                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>#}
+                                    </div>
+{#                                    <small class="text-muted">9 mins</small>#}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

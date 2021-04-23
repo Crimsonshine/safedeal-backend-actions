@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div class="jumbotron">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+        <h2>Список товаров</h2>
+        <table class="table table-striped">
+            <thread>
+                <tr>
+                    <td><b>Название</b></td>
+                    <td><b>Цена</b></td>
+                    <td><b>Адрес отправки</b></td>
+                </tr>
+            </thread>
+            <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>
+                        {{ product.name }}
+                    </td>
+                    <td>
+                        {{ product.price }}
+                    </td>
+                    <td>
+                        {{ product.addressFrom }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

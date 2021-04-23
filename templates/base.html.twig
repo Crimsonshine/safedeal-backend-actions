@@ -18,7 +18,14 @@
     {% block stylesheets %}
         {#{{ encore_entry_link_tags('app') }}#}
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css"/>
-    {% endblock %}
+        <style>
+            .address_to_label {
+                display: inline;
+                width: 500px;
+                margin-left: 10px;
+            }
+        </style>
+        {% endblock %}
 
     {% block javascripts %}
         {#{{ encore_entry_script_tags('app') }}#}

@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="jumbotron">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <h2><p class="text-center">Оформление заказа</p></h2>
+
+        {% if items | length > 0 %}
+        <div class="row justify-content-center" >
+            <table class="table table-striped" style="width:70%">
+                <thread>
+                    <tr>
+                        <td></td>
+                        <td><b>Товар</b></td>
+                        <td><b>Продавец</b></td>
+                        <td><b>Цена</b></td>
+                        <td><b>Количество</b></td>
+                    </tr>
+                </thread>
+
+                {% for item in items %}
+                    <tr>
+                        <td style="text-align: center">
+                            <img src="{{ '/uploads/' ~ item.product.image }}" style="height: 225px; width: 225px;" class="rounded mx-auto d-block">
+                        </td>
+                        <td>
+                            {{ item.product.name }}
+                        </td>
+                        <td>
+                            {{ item.product.sender.fullName }}
+                        </td>
+                        <td>
+                            {{ item.product.price }}
+                        </td>
+                        <td>
+                            {{ item.quantity }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="row justify-content-center" >
+            {{ form(form) }}
+            <a class="btn btn-primary btn-lg" href="{{ path('product.create') }}" role="button">Список товаров (customer)</a>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

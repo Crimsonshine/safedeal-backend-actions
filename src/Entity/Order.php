@@ -15,6 +15,7 @@ class Order
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @ORM\OneToMany(targetEntity=OrderProduct::class, mappedBy="order")
      */
     private $id;
 
@@ -23,12 +24,6 @@ class Order
      * @ORM\JoinColumn(nullable=false)
      */
     private $customer;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="orders")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $sender;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="orders")
@@ -68,18 +63,6 @@ class Order
     public function setCustomer(?User $customer): self
     {
         $this->customer = $customer;
-
-        return $this;
-    }
-
-    public function getSender(): ?User
-    {
-        return $this->sender;
-    }
-
-    public function setSender(?User $sender): self
-    {
-        $this->sender = $sender;
 
         return $this;
     }
