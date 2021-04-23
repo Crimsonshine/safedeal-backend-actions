@@ -45,7 +45,9 @@ class OrderController extends AbstractController
 
                 $order = new Order();
                 $order->setCustomer($data['product.name']);
-                $order->setSender($data['product.sender']);
+                //$order->
+
+
 
                 $em = $this->getDoctrine()->getManager();
 
@@ -59,8 +61,8 @@ class OrderController extends AbstractController
         //dd($cardAddData);
 
         return $this->render('order/create.html.twig', [
-            'items' => $cardAddData,
-            'form' => $form->createView()
+            'items' => $cardAddData
+//            'form' => $form->createView()
         ]);
     }
 }
