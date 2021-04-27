@@ -37,7 +37,7 @@ class Order
     private $addressTo;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $deliveryDate;
 

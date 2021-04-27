@@ -23,7 +23,7 @@ class OrderProduct
      * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="orderProducts")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $products;
+    private $product;
 
     /**
      * @ORM\ManyToOne(targetEntity=Order::class, inversedBy="orderProducts")
@@ -36,26 +36,22 @@ class OrderProduct
      */
     private $quantity;
 
-    public function __construct()
-    {
-        $this->products = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getProducts(): Collection
+    public function getProduct(?Product $product): self
     {
-        return $this->products;
+        $this->order = $product;
+
+        return $this;
     }
 
-    public function addProduct(Product $product): self
+    public function setProduct(?Product $product): self
     {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-        }
+        $this->product = $product;
 
         return $this;
     }

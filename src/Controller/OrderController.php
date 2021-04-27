@@ -18,8 +18,16 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/order', name: 'order.')]
 class OrderController extends AbstractController
 {
+    private ProductRepository $productRepository;
+    private SessionInterface $sessionInterface;
+
+    public function __construct(ProductRepository $productRepository, SessionInterface $sessionInterface) {
+        $this->productRepository = $productRepository;
+        $this->sessionInterface = $sessionInterface;
+    }
+
     #[Route('/create', name: 'create')]
-    public function create(Request $request, SessionInterface $session, ProductRepository $repository): Response
+    public function create(Request $request): Response
     {
         $form = $this->createFormBuilder()
             ->add('address_to', TextType::class, [
@@ -38,12 +46,32 @@ class OrderController extends AbstractController
         ;
         $form->handleRequest($request);
 
-        $cardAdd = $session->get('cart_add', []);
+        $cardAdd = $this->sessionInterface->get('cart_add', []);
         $cardAddData = [];
 
-        $i = 1;
+        $i              = 1;
+        $em             = null;
+        $order          = null;
+        $orderProduct   = null;
+
+        if ($form->isSubmitted()) {
+            $order = new Order();
+            $user = $this->getUser();
+            $data = $form->getData();
+
+            $order->setCustomer($user);
+            //$order->setCourier();
+            $order->setAddressTo($data['address_to']);
+            //$order->setDeliveryDate();
+            $order->setCreationDate(date('H:i:s \O\n d/m/Y'));
+            $order->setStatus("оплачен");
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($order);
+        }
+
         foreach($cardAdd as $id => $quantity) {
-            $productData = $repository->find($id);
+            $productData = $this->productRepository->find($id);
 
             $cardAddData[] = [
                 'product' => $productData,
@@ -51,41 +79,22 @@ class OrderController extends AbstractController
             ];
 
             if ($form->isSubmitted()) {
-                $order = null;
-                $orderProduct = null;
-
-                if ($i == 1) {
-                    $order = new Order();
-                    $orderProduct = new OrderProduct();
-                    $user = $this->getUser();
-                    $data = $form->getData();
-
-                    $order->setCustomer($user);
-                    //$order->setCourier();
-                    $order->setAddressTo($data['address_to']);
-                    //$order->setDeliveryDate();
-                    $order->setCreationDate(date('H:i:s \O\n d/m/Y'));
-                    $order->setStatus("оплачен");
-                }
-
                 //$product = new Product();
-                $orderProduct->addProduct($productData->getProduct());
+                $orderProduct = new OrderProduct();
+                $orderProduct->setProduct($productData->getProduct());
                 $orderProduct->setOrder($order);
                 $orderProduct->setQuantity($quantity);
 
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($order);
                 $em->persist($orderProduct);
                 $em->flush();
-
-                return $this->redirect($this->generateUrl('main'));
             }
-
-            $i++;
         }
 
+        if ($form->isSubmitted()) {
+            $cardAdd = $this->sessionInterface->remove('cart_add');
+            return $this->redirect($this->generateUrl('main'));
+        }
         //dd($cardAddData);
-
         return $this->render('order/create.html.twig', [
             'items' => $cardAddData,
             'form' => $form->createView()
