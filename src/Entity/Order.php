@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\OrderRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=OrderRepository::class)
@@ -55,24 +56,24 @@ class Order
         return $this->id;
     }
 
-    public function getCustomer(): ?User
+    public function getCustomer(): ?UserInterface
     {
         return $this->customer;
     }
 
-    public function setCustomer(?User $customer): self
+    public function setCustomer(?UserInterface $customer): self
     {
         $this->customer = $customer;
 
         return $this;
     }
 
-    public function getCourier(): ?User
+    public function getCourier(): ?UserInterface
     {
         return $this->courier;
     }
 
-    public function setCourier(?User $courier): self
+    public function setCourier(?UserInterface $courier): self
     {
         $this->courier = $courier;
 

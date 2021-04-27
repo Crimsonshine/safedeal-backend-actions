@@ -18,10 +18,14 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/product', name: 'product.')]
 class ProductController extends AbstractController
 {
-    /**
-     * @param Request $request
-     * @return Response
-     */
+    private ProductRepository $productRepository;
+    private SessionInterface $sessionInterface;
+
+    public function __construct(ProductRepository $productRepository, SessionInterface $sessionInterface) {
+        $this->productRepository = $productRepository;
+        $this->sessionInterface = $sessionInterface;
+    }
+
     #[Route('/add', name: 'add')]
     public function add(Request $request): Response
     {
@@ -84,15 +88,11 @@ class ProductController extends AbstractController
         ]);
     }
 
-    /**
-     * @param ProductRepository $repository
-     * @return Response
-     */
     #[Route('/list', name: 'list')]
-    public function list(ProductRepository $repository): Response
+    public function list(): Response
     {
         $user = $this->getUser();
-        $products = $repository->findBy(['sender' => $user]);
+        $products = $this->productRepository->findBy(['sender' => $user]);
 
         return $this->render('product/list.html.twig', [
             'products' => $products
@@ -100,10 +100,10 @@ class ProductController extends AbstractController
     }
 
     #[Route('/all', name: 'all')]
-    public function all(ProductRepository $repository): Response
+    public function all(): Response
     {
         $user = $this->getUser();
-        $products = $repository->findAll();
+        $products = $this->productRepository->findAll();
 
         return $this->render('product/all.html.twig', [
             'products' => $products
@@ -111,9 +111,9 @@ class ProductController extends AbstractController
     }
 
     #[Route('/cart_add/{id}', name: 'cart_add')]
-    public function cartAdd($id, SessionInterface $session)
+    public function cartAdd($id)
     {
-        $cardAdd = $session->get('cart_add', []);
+        $cardAdd = $this->sessionInterface->get('cart_add', []);
 
         if (!empty($cardAdd[$id])){
             $cardAdd[$id]++;
@@ -121,15 +121,11 @@ class ProductController extends AbstractController
             $cardAdd[$id] = 1;
         }
 
-        $session->set('cart_add', $cardAdd);
+        $this->sessionInterface->set('cart_add', $cardAdd);
         //dd($session->get('cart_add'));
         return $this->redirect($this->generateUrl('product.all'));
     }
 
-    /**
-     * @param Product $product
-     * @return Response
-     */
     #[Route('/show/{id}', name: 'show')]
     public function show(Product $product): Response {
         return $this->render('product/show.html.twig', [

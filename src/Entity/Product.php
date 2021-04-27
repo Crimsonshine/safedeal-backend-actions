@@ -47,6 +47,11 @@ class Product
      */
     private $sender;
 
+    public function getProduct(): ?product
+    {
+        return $this;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

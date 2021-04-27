@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\OrderProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -21,7 +23,7 @@ class OrderProduct
      * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="orderProducts")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $product;
+    private $products;
 
     /**
      * @ORM\ManyToOne(targetEntity=Order::class, inversedBy="orderProducts")
@@ -34,19 +36,26 @@ class OrderProduct
      */
     private $quantity;
 
+    public function __construct()
+    {
+        $this->products = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getProduct(): ?Product
+    public function getProducts(): Collection
     {
-        return $this->product;
+        return $this->products;
     }
 
-    public function setProduct(?Order $product): self
+    public function addProduct(Product $product): self
     {
-        $this->product = $product;
+        if (!$this->products->contains($product)) {
+            $this->products[] = $product;
+        }
 
         return $this;
     }
