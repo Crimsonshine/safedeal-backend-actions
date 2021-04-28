@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Product;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -11,17 +12,18 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
 
 class ProductService
 {
     private ParameterBagInterface $params;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(ParameterBagInterface $params)
+    public function __construct(ParameterBagInterface $params, EntityManagerInterface $entityManager)
     {
         $this->params = $params;
+        $this->entityManager = $entityManager;
     }
 
     public function getForm(): FormInterface
@@ -56,27 +58,35 @@ class ProductService
         return $form;
     }
 
-    public function createProduct(array $data, UserInterface $user): Product
+    public function uploadFile(UploadedFile $file = null): string
     {
-        $product = new Product();
-        $product->setName($data['name']);
-        $product->setPrice($data['price']);
-        $product->setAddressFrom($data['address_from']);
-        $product->setSender($user);
-
-        return $product;
-    }
-
-    public function uploadImage(Product $product, Request $request)
-    {
-        $file = $request->files->get('form')['attachment'];
         /** @var UploadedFile $file */
         if ($file) {
             $filename = md5(uniqid()) . '.' . $file->guessClientExtension();
             $file->move(
                 $this->params->get('uploads_dir'), $filename
             );
-            $product->setImage($filename);
+
+            return $filename;
         }
+
+        return "";
     }
+
+    public function createProduct(UserInterface $user, string $name, float $price, string $addressFrom, UploadedFile $file = null): Product
+    {
+        $product = new Product();
+        $product->setName($name);
+        $product->setPrice($price);
+        $product->setAddressFrom($addressFrom);
+        $product->setSender($user);
+        $product->setImage($this->uploadFile($file));
+
+        $this->entityManager->persist($product);
+        $this->entityManager->flush();
+
+        return $product;
+    }
+
+
 }

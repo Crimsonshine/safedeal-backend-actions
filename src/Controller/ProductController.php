@@ -37,10 +37,8 @@ class ProductController extends AbstractController
             $data = $form->getData();
             $user = $this->getUser();
 
-            $product = $this->productService->createProduct($data, $user);
-            $this->productService->uploadImage($product, $request);
-            $this->entityManager->persist($product);
-            $this->entityManager->flush();
+            $file = $request->files->get('form')['attachment'];
+            $this->productService->createProduct($user, $data['name'], $data['price'], $data['address_from'], $file);
 
             return $this->redirect($this->generateUrl('main'));
         }
