@@ -4,7 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use App\Service\ProductService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -20,65 +23,30 @@ class ProductController extends AbstractController
 {
     private ProductRepository $productRepository;
     private SessionInterface $sessionInterface;
+    private ProductService $productService;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(ProductRepository $productRepository, SessionInterface $sessionInterface) {
+    public function __construct(ProductRepository $productRepository, SessionInterface $sessionInterface, ProductService $productService, EntityManagerInterface $entityManager) {
         $this->productRepository = $productRepository;
         $this->sessionInterface = $sessionInterface;
+        $this->productService = $productService;
+        $this->entityManager = $entityManager;
     }
 
     #[Route('/add', name: 'add')]
     public function add(Request $request): Response
     {
-        $form = $this->createFormBuilder()
-            ->add('name', TextType::class, [
-                'label' =>'Название'
-            ])
-            ->add('attachment',FileType::class, [
-                'label' => 'Картинка',
-                'mapped' => false
-            ])
-            ->add('price',  MoneyType::class, [
-                'label' =>'Цена',
-                'currency' => 'RUB'
-            ])
-            ->add('address_from',  TextType::class, [
-                'label' =>'Адрес отправки'
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Добавить',
-                'attr' =>[
-                    'class' =>'btn btn-success float-right'
-                ]
-            ])
-            ->getForm()
-        ;
-
+        $form = $this->productService->getForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
             $data = $form->getData();
             $user = $this->getUser();
 
-            $product = new Product();
-            $product->setName($data['name']);
-            $product->setPrice($data['price']);
-            $product->setAddressFrom($data['address_from']);
-            $product->setSender($user);
-
-            $em = $this->getDoctrine()->getManager();
-
-            $file = $request->files->get('form')['attachment'];
-            /** @var UploadedFile $file */
-            if ($file) {
-                $filename = md5(uniqid()) . '.' . $file->guessClientExtension();
-                $file->move(
-                    $this->getParameter('uploads_dir'), $filename
-                );
-                $product->setImage($filename);
-            }
-
-            $em->persist($product);
-            $em->flush();
+            $product = $this->productService->createProduct($data, $user);
+            $this->productService->uploadImage($product, $request);
+            $this->entityManager->persist($product);
+            $this->entityManager->flush();
 
             return $this->redirect($this->generateUrl('main'));
         }

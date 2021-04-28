@@ -6,6 +6,7 @@ use App\Entity\Order;
 use App\Entity\OrderProduct;
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -20,10 +21,12 @@ class OrderController extends AbstractController
 {
     private ProductRepository $productRepository;
     private SessionInterface $sessionInterface;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(ProductRepository $productRepository, SessionInterface $sessionInterface) {
+    public function __construct(ProductRepository $productRepository, SessionInterface $sessionInterface, EntityManagerInterface $entityManager) {
         $this->productRepository = $productRepository;
         $this->sessionInterface = $sessionInterface;
+        $this->entityManager = $entityManager;
     }
 
     #[Route('/create', name: 'create')]
@@ -46,11 +49,9 @@ class OrderController extends AbstractController
         ;
         $form->handleRequest($request);
 
-        $cardAdd = $this->sessionInterface->get('cart_add', []);
+        $cardProducts = $this->sessionInterface->get('cart_add', []);
         $cardAddData = [];
 
-        $i              = 1;
-        $em             = null;
         $order          = null;
         $orderProduct   = null;
 
@@ -60,18 +61,15 @@ class OrderController extends AbstractController
             $data = $form->getData();
 
             $order->setCustomer($user);
-            //$order->setCourier();
             $order->setAddressTo($data['address_to']);
-            //$order->setDeliveryDate();
             $order->setCreationDate(date('H:i:s \O\n d/m/Y'));
             $order->setStatus("оплачен");
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($order);
+            $this->entityManager->persist($order);
         }
 
-        foreach($cardAdd as $id => $quantity) {
-            $productData = $this->productRepository->find($id);
+        foreach($cardProducts as $cardProduct => $quantity) {
+            $productData = $this->productRepository->find($cardProduct);
 
             $cardAddData[] = [
                 'product' => $productData,
@@ -85,8 +83,8 @@ class OrderController extends AbstractController
                 $orderProduct->setOrder($order);
                 $orderProduct->setQuantity($quantity);
 
-                $em->persist($orderProduct);
-                $em->flush();
+                $this->entityManager->persist($orderProduct);
+                $this->entityManager->flush();
             }
         }
 
