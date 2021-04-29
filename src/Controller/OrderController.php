@@ -34,8 +34,6 @@ class OrderController extends AbstractController
         $form->handleRequest($request);
 
         $cardProducts   = $this->sessionInterface->get('cart_add', []);
-        $cardAddData    = [];
-        $orderProduct   = null;
         $order          = null;
 
         if ($form->isSubmitted()) {
@@ -45,28 +43,10 @@ class OrderController extends AbstractController
             $order = $this->orderService->createOrder($user, $data['address_to'], date('H:i:s \O\n d/m/Y'), "оплачен");
         }
 
-        foreach($cardProducts as $cardProduct => $quantity) {
-            $productData = $this->productRepository->find($cardProduct);
-
-            $cardAddData[] = [
-                'product' => $productData,
-                'quantity' => $quantity
-            ];
-
-            if ($form->isSubmitted()) {
-                //$product = new Product();
-                $orderProduct = new OrderProduct();
-                $orderProduct->setProduct($productData->getProduct());
-                $orderProduct->setOrder($order);
-                $orderProduct->setQuantity($quantity);
-
-                $this->entityManager->persist($orderProduct);
-                $this->entityManager->flush();
-            }
-        }
+        $cardAddData = $this->orderService->createOrderProductItems($form, $cardProducts, $order);
 
         if ($form->isSubmitted()) {
-            $cardAdd = $this->sessionInterface->remove('cart_add');
+            $this->sessionInterface->remove('cart_add');
             return $this->redirect($this->generateUrl('main'));
         }
         //dd($cardAddData);
