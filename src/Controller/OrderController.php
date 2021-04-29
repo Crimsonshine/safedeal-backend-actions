@@ -2,13 +2,11 @@
 
 namespace App\Controller;
 
-use App\Entity\Order;
 use App\Entity\OrderProduct;
 use App\Repository\ProductRepository;
+use App\Service\OrderService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -20,50 +18,31 @@ class OrderController extends AbstractController
     private ProductRepository $productRepository;
     private SessionInterface $sessionInterface;
     private EntityManagerInterface $entityManager;
+    private OrderService $orderService;
 
-    public function __construct(ProductRepository $productRepository, SessionInterface $sessionInterface, EntityManagerInterface $entityManager) {
+    public function __construct(ProductRepository $productRepository, SessionInterface $sessionInterface, EntityManagerInterface $entityManager, OrderService $orderService) {
         $this->productRepository = $productRepository;
         $this->sessionInterface = $sessionInterface;
         $this->entityManager = $entityManager;
+        $this->orderService = $orderService;
     }
 
     #[Route('/create', name: 'create')]
     public function create(Request $request): Response
     {
-        $form = $this->createFormBuilder()
-            ->add('address_to', TextType::class, [
-                'label' =>'Введите адрес доставки',
-                'attr' => [
-                    'class' => 'address_to_label'
-                ],
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Добавить',
-                'attr' =>[
-                    'class' =>'btn btn-success float-right'
-                ]
-            ])
-            ->getForm()
-        ;
+        $form = $this->orderService->getForm();
         $form->handleRequest($request);
 
-        $cardProducts = $this->sessionInterface->get('cart_add', []);
-        $cardAddData = [];
-
-        $order          = null;
+        $cardProducts   = $this->sessionInterface->get('cart_add', []);
+        $cardAddData    = [];
         $orderProduct   = null;
+        $order          = null;
 
         if ($form->isSubmitted()) {
-            $order = new Order();
             $user = $this->getUser();
             $data = $form->getData();
 
-            $order->setCustomer($user);
-            $order->setAddressTo($data['address_to']);
-            $order->setCreationDate(date('H:i:s \O\n d/m/Y'));
-            $order->setStatus("оплачен");
-
-            $this->entityManager->persist($order);
+            $order = $this->orderService->createOrder($user, $data['address_to'], date('H:i:s \O\n d/m/Y'), "оплачен");
         }
 
         foreach($cardProducts as $cardProduct => $quantity) {

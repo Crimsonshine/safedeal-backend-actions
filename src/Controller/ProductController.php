@@ -18,13 +18,11 @@ class ProductController extends AbstractController
     private ProductRepository $productRepository;
     private SessionInterface $sessionInterface;
     private ProductService $productService;
-    private EntityManagerInterface $entityManager;
 
-    public function __construct(ProductRepository $productRepository, SessionInterface $sessionInterface, ProductService $productService, EntityManagerInterface $entityManager) {
+    public function __construct(ProductRepository $productRepository, SessionInterface $sessionInterface, ProductService $productService) {
         $this->productRepository = $productRepository;
         $this->sessionInterface = $sessionInterface;
         $this->productService = $productService;
-        $this->entityManager = $entityManager;
     }
 
     #[Route('/add', name: 'add')]
