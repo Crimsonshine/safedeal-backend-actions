@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\OrderProduct;
 use App\Repository\ProductRepository;
 use App\Service\OrderService;
+use App\Service\ProductService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,12 +20,14 @@ class OrderController extends AbstractController
     private SessionInterface $sessionInterface;
     private EntityManagerInterface $entityManager;
     private OrderService $orderService;
+    private ProductService $productService;
 
-    public function __construct(ProductRepository $productRepository, SessionInterface $sessionInterface, EntityManagerInterface $entityManager, OrderService $orderService) {
+    public function __construct(ProductRepository $productRepository, SessionInterface $sessionInterface, EntityManagerInterface $entityManager, OrderService $orderService, ProductService $productService) {
         $this->productRepository = $productRepository;
         $this->sessionInterface = $sessionInterface;
         $this->entityManager = $entityManager;
         $this->orderService = $orderService;
+        $this->productService = $productService;
     }
 
     #[Route('/create', name: 'create')]
@@ -34,24 +37,19 @@ class OrderController extends AbstractController
         $form->handleRequest($request);
 
         $cardProducts   = $this->sessionInterface->get('cart_add', []);
-        $order          = null;
+        $cart           = $this->productService->addToCart($cardProducts);
 
         if ($form->isSubmitted()) {
             $user = $this->getUser();
             $data = $form->getData();
 
-            $order = $this->orderService->createOrder($user, $data['address_to'], date('H:i:s \O\n d/m/Y'), "оплачен");
-        }
-
-        $cardAddData = $this->orderService->createOrderProductItems($form, $cardProducts, $order);
-
-        if ($form->isSubmitted()) {
+            $order = $this->orderService->createOrder($user, $data['address_to'], $cart);
             $this->sessionInterface->remove('cart_add');
             return $this->redirect($this->generateUrl('main'));
         }
-        //dd($cardAddData);
+
         return $this->render('order/create.html.twig', [
-            'items' => $cardAddData,
+            'items' => $cart,
             'form' => $form->createView()
         ]);
     }

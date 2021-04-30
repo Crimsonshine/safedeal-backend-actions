@@ -52,21 +52,7 @@ class OrderService
         return $form;
     }
 
-    public function createOrder(UserInterface $user, string $addressTo, string $creationDate, string $status): Order
-    {
-        $order = new Order();
-        $order->setCustomer($user);
-        $order->setAddressTo($addressTo);
-        $order->setCreationDate($creationDate);
-        $order->setStatus($status);
-
-        $this->entityManager->persist($order);
-        $this->entityManager->flush();
-
-        return $order;
-    }
-
-    public function createOrderProduct(Product $productData, Order $order, int $quantity): OrderProduct
+    public function createOrderProduct(Order $order, Product $productData, int $quantity): OrderProduct
     {
         $orderProduct = new OrderProduct();
         $orderProduct->setProduct($productData->getProduct());
@@ -79,23 +65,21 @@ class OrderService
         return $orderProduct;
     }
 
-    public function createOrderProductItems(FormInterface $form, mixed $cardProducts, Order $order = null): array
+    public function createOrder(UserInterface $user, string $addressTo, array $cart): Order
     {
-        $cardAddData = [];
+        $order = new Order();
+        $order->setCustomer($user);
+        $order->setAddressTo($addressTo);
+        $order->setCreationDate(date('H:i:s \O\n d/m/Y'));
+        $order->setStatus("оплачен");
 
-        foreach($cardProducts as $cardProduct => $quantity) {
-            $productData = $this->productRepository->find($cardProduct);
-
-            $cardAddData[] = [
-                'product' => $productData,
-                'quantity' => $quantity
-            ];
-
-            if ($form->isSubmitted()) {
-                $this->createOrderProduct($productData, $order, $quantity);
-            }
+        foreach($cart as $cartItem){
+            $this->createOrderProduct($order, $cartItem['product'], $cartItem['quantity']);
         }
 
-        return $cardAddData;
+        $this->entityManager->persist($order);
+        $this->entityManager->flush();
+
+        return $order;
     }
 }

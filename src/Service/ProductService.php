@@ -2,7 +2,9 @@
 
 namespace App\Service;
 
+use App\Entity\Order;
 use App\Entity\Product;
+use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -19,11 +21,13 @@ class ProductService
 {
     private ParameterBagInterface $params;
     private EntityManagerInterface $entityManager;
+    private productRepository $productRepository;
 
-    public function __construct(ParameterBagInterface $params, EntityManagerInterface $entityManager)
+    public function __construct(ParameterBagInterface $params, EntityManagerInterface $entityManager, productRepository $productRepository)
     {
         $this->params = $params;
         $this->entityManager = $entityManager;
+        $this->productRepository = $productRepository;
     }
 
     public function getForm(): FormInterface
@@ -88,5 +92,20 @@ class ProductService
         return $product;
     }
 
+    public function addToCart(array $cartProducts): array
+    {
+        $cardAddData = [];
+
+        foreach($cartProducts as $cardProduct => $quantity) {
+            $productData = $this->productRepository->find($cardProduct);
+
+            $cardAddData[] = [
+                'product' => $productData,
+                'quantity' => $quantity
+            ];
+        }
+
+        return $cardAddData;
+    }
 
 }
