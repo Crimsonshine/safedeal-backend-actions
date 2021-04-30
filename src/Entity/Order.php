@@ -12,6 +12,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class Order
 {
+    public const STATUS_REGISTERED  = 'оформлен';
+    public const STATUS_PAID        = 'оплачен';
+    public const STATUS_IN_TRANSIT  = 'в пути';
+    public const STATUS_DELIVERED   = 'доставлен';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

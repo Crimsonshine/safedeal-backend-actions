@@ -71,7 +71,7 @@ class OrderService
         $order->setCustomer($user);
         $order->setAddressTo($addressTo);
         $order->setCreationDate(date('H:i:s \O\n d/m/Y'));
-        $order->setStatus("оплачен");
+        $order->setStatus($order::STATUS_PAID);
 
         foreach($cart as $cartItem){
             $this->createOrderProduct($order, $cartItem['product'], $cartItem['quantity']);
