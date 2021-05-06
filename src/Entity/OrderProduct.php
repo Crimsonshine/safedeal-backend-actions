@@ -42,11 +42,9 @@ class OrderProduct
         return $this->id;
     }
 
-    public function getProduct(?Product $product): self
+    public function getProduct():  ?Product
     {
-        $this->order = $product;
-
-        return $this;
+        return $this->product;
     }
 
     public function setProduct(?Product $product): self

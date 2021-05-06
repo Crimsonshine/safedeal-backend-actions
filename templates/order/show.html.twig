@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="jumbotron">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <h2><p class="text-center">Оформление заказа</p></h2>
+        <div class="row justify-content-center" >
+            <table class="table table-striped" style="width:70%">
+                <thread>
+                    <tr>
+                        <td></td>
+                        <td><b>Товар</b></td>
+                        <td><b>Продавец</b></td>
+                        <td><b>Цена</b></td>
+                        <td><b>Количество</b></td>
+                    </tr>
+                </thread>
+
+                {% for order_product in order_products %}
+                    <tr>
+                        <td style="text-align: center">
+                            <img src="{{ '/uploads/' ~ order_product.product.image }}" style="height: 225px; width: 225px;" class="rounded mx-auto d-block">
+                        </td>
+                        <td>
+                            {{ order_product.product.name }}
+                        </td>
+                        <td>
+                            {{ order_product.product.sender.fullName }}
+                        </td>
+                        <td>
+                            {{ order_product.product.price }}
+                        </td>
+                        <td>
+                            {{ order_product.quantity }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+{#                <div class="row justify-content-center" >#}
+{#                    {{ form(form) }}#}
+{#                </div>#}
+    </div>
+{% endblock %}
